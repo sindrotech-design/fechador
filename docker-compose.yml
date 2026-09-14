@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  fechador:
+    build: .
+    ports:
+      - "43127:43127"
+      - "43128:43128"
+    env_file:
+      - .env
+    volumes:
+      - ./session:/app/session
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:43128/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
