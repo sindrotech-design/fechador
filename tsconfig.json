@@ -16,8 +16,9 @@
       "@/*": ["./src/*"],
       "@server/*": ["./server/*"]
     },
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "vite/client"]
   },
-  "include": ["src", "vite.config.ts"],
-  "exclude": ["node_modules", "dist", "server"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "server", "vite.config.ts"]
 }
