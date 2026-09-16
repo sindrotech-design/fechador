@@ -12,14 +12,13 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@server/*": ["server/*"]
+      "@/*": ["./src/*"],
+      "@server/*": ["./server/*"]
     },
     "skipLibCheck": true,
     "types": ["vite/client"]
   },
-  "include": ["src", "server", "vite.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src", "vite.config.ts"],
+  "exclude": ["node_modules", "dist", "server"]
 }
