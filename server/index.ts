@@ -8,6 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import whatsappRoutes from './routes/whatsapp.js';
+import { whatsappService } from './services/whatsapp.js';
 import ordersRoutes from './routes/orders.js';
 import productsRoutes from './routes/products.js';
 import deliveriesRoutes from './routes/deliveries.js';
@@ -81,6 +82,11 @@ httpServer.listen({ port: PORT, host: '0.0.0.0', ipv6Only: false }, () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`WebSocket server ready`);
   logger.info(`Server address: ${JSON.stringify(httpServer.address())}`);
+  
+  // Initialize WhatsApp
+  whatsappService.initialize().catch(err => {
+    logger.error({ err }, 'Failed to initialize WhatsApp');
+  });
 });
 
 httpServer.on('error', (err) => {
