@@ -72,7 +72,9 @@ export class WhatsAppService extends EventEmitter {
       this.sock.ev.on('creds.update', saveCreds);
 
       this.sock.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect, qr } = update;
+        const { connection, lastDisconnect, qr, receivedPendingNotifications } = update;
+        
+        logger.debug({ connection, hasQr: !!qr, receivedPendingNotifications }, 'WhatsApp connection update');
         
         if (qr) {
           logger.info('QR Code received');
@@ -89,7 +91,7 @@ export class WhatsAppService extends EventEmitter {
         if (connection === 'close') {
           const statusCode = (lastDisconnect?.error as any)?.output?.statusCode;
           const shouldReconnect = statusCode !== 401 && statusCode !== 403;
-          logger.warn({ statusCode, shouldReconnect }, 'WhatsApp disconnected');
+          logger.warn({ statusCode, shouldReconnect, error: lastDisconnect?.error?.message }, 'WhatsApp disconnected');
           this.emit('disconnected', lastDisconnect?.error?.message || 'Unknown');
           
           if (shouldReconnect) {
@@ -100,6 +102,10 @@ export class WhatsAppService extends EventEmitter {
             fs.rmSync(this.sessionPath, { recursive: true, force: true });
             setTimeout(() => this.initialize(), 5000);
           }
+        }
+
+        if (connection === 'connecting') {
+          logger.info('WhatsApp connecting...');
         }
       });
 
