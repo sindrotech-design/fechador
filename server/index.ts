@@ -54,7 +54,7 @@ app.use('/api/mercadopago', mercadoPagoRoutes);
 
 // Serve static frontend in production
 if (process.env.NODE_ENV === 'production') {
-  const clientPath = path.join(__dirname, '../dist/client');
+  const clientPath = path.join(__dirname, '../../dist/client');
   app.use(express.static(clientPath));
   
   // SPA fallback - serve index.html for non-API routes
