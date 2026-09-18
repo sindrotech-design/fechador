@@ -82,8 +82,10 @@ httpServer.listen({ port: PORT, host: '0.0.0.0', ipv6Only: false }, () => {
   logger.info(`Server running on port ${PORT}`);
   logger.info(`WebSocket server ready`);
   logger.info(`Server address: ${JSON.stringify(httpServer.address())}`);
-  
-  // Initialize WhatsApp
+});
+
+// Initialize WhatsApp in background (non-blocking)
+setImmediate(() => {
   whatsappService.initialize().catch(err => {
     logger.error({ err }, 'Failed to initialize WhatsApp');
   });
