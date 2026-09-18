@@ -4,9 +4,7 @@ const require = createRequire(import.meta.url);
 import { proto, WASocket } from '@whiskeysockets/baileys';
 import { useMultiFileAuthState } from '@whiskeysockets/baileys';
 import pino from 'pino';
-import qrcodeGenerate from 'qrcode-terminal';
-const qrcode = { generate: qrcodeGenerate };
-// Force recompile: qrcode-terminal v0.11.0 fix
+import qrcode from 'qrcode-terminal';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
