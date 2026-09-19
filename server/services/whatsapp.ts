@@ -13,16 +13,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const logger = pino({ level: 'info' });
 
-let qrcode: any;
-
-function initQrcode() {
-  if (!qrcode) {
-    const qrcodeModule = require('qrcode-terminal');
-    qrcode = qrcodeModule.default || qrcodeModule;
-  }
-  return qrcode;
-}
-
 export interface WhatsAppServiceEvents {
   'qr': (qr: string) => void;
   'connected': () => void;
@@ -86,7 +76,9 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          initQrcode()(qr, { small: true });
+          const qrcodeModule = require('qrcode-terminal');
+          const qrcode = qrcodeModule.default || qrcodeModule;
+          qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
 
