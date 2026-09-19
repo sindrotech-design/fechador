@@ -4,7 +4,6 @@ const require = createRequire(import.meta.url);
 import { proto, WASocket } from '@whiskeysockets/baileys';
 import { useMultiFileAuthState } from '@whiskeysockets/baileys';
 import pino from 'pino';
-const qrcode = (await import('qrcode-terminal')).default || await import('qrcode-terminal');
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -13,6 +12,16 @@ import { EventEmitter } from 'events';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const logger = pino({ level: 'info' });
+
+let qrcode: any;
+
+function initQrcode() {
+  if (!qrcode) {
+    const qrcodeModule = require('qrcode-terminal');
+    qrcode = qrcodeModule.default || qrcodeModule;
+  }
+  return qrcode;
+}
 
 export interface WhatsAppServiceEvents {
   'qr': (qr: string) => void;
@@ -77,7 +86,7 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          qrcode(qr, { small: true });
+          initQrcode()(qr, { small: true });
           this.emit('qr', qr);
         }
 
