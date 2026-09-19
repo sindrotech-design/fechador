@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 import { proto, WASocket } from '@whiskeysockets/baileys';
 import { useMultiFileAuthState } from '@whiskeysockets/baileys';
 import pino from 'pino';
