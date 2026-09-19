@@ -1,5 +1,5 @@
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+const cjsRequire = createRequire(import.meta.url);
 
 import { proto, WASocket } from '@whiskeysockets/baileys';
 import { useMultiFileAuthState } from '@whiskeysockets/baileys';
@@ -8,9 +8,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { EventEmitter } from 'events';
-
-// qrcode-terminal is CommonJS, loads function directly
-const qrcode = require('qrcode-terminal');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -79,6 +76,8 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
+          const qrcodeModule = await import('qrcode-terminal');
+          const qrcode = qrcodeModule.default || qrcodeModule;
           qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
