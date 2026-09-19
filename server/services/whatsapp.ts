@@ -76,7 +76,7 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          const qrcode = cjsRequire('qrcode-terminal');
+          let qrcode = cjsRequire('qrcode-terminal');
           if (typeof qrcode !== 'function') {
             qrcode = qrcode.default || qrcode;
           }
