@@ -1,6 +1,9 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
+// Load qrcode-terminal at module level to ensure it's properly loaded
+const qrcode = require('qrcode-terminal');
+
 import { proto, WASocket } from '@whiskeysockets/baileys';
 import { useMultiFileAuthState } from '@whiskeysockets/baileys';
 import pino from 'pino';
@@ -76,8 +79,6 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          const qrcodeMod = require('qrcode-terminal');
-          const qrcode = typeof qrcodeMod === 'function' ? qrcodeMod : (qrcodeMod.default || qrcodeMod);
           qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
