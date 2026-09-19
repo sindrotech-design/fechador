@@ -15,6 +15,10 @@ function getQrcode() {
   if (!qrcodeModule) {
     const mod = require('qrcode-terminal');
     qrcodeModule = mod.default || mod;
+    // qrcode-terminal exports a function directly, ensure we have the function
+    if (typeof qrcodeModule !== 'function') {
+      qrcodeModule = mod;
+    }
   }
   return qrcodeModule;
 }
