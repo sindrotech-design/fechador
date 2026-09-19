@@ -1,8 +1,5 @@
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
-// Load qrcode-terminal at module level to ensure it's properly loaded
-const qrcode = require('qrcode-terminal');
+const cjsRequire = createRequire(import.meta.url);
 
 import { proto, WASocket } from '@whiskeysockets/baileys';
 import { useMultiFileAuthState } from '@whiskeysockets/baileys';
@@ -79,6 +76,7 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
+          const qrcode = cjsRequire('qrcode-terminal');
           qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
