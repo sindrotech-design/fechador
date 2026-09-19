@@ -1,6 +1,3 @@
-import { createRequire } from 'module';
-const cjsRequire = createRequire(import.meta.url);
-
 import { proto, WASocket } from '@whiskeysockets/baileys';
 import { useMultiFileAuthState } from '@whiskeysockets/baileys';
 import pino from 'pino';
@@ -76,7 +73,7 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          const qrcode = cjsRequire('qrcode-terminal').default || cjsRequire('qrcode-terminal');
+          const qrcode = (await import('qrcode-terminal')).default;
           qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
