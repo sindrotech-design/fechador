@@ -81,7 +81,7 @@ export class WhatsAppService extends EventEmitter {
 
       this.sock.ev.on('creds.update', saveCreds);
 
-      this.sock.ev.on('connection.update', (update) => {
+      this.sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect, qr, receivedPendingNotifications } = update;
         
         logger.debug({ connection, hasQr: !!qr, receivedPendingNotifications }, 'WhatsApp connection update');
