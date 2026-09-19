@@ -9,6 +9,13 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { EventEmitter } from 'events';
 
+// Load qrcode-terminal at module level
+let qrcode: any;
+(async () => {
+  const mod = await import('qrcode-terminal');
+  qrcode = mod.default || mod;
+})();
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const logger = pino({ level: 'info' });
@@ -76,10 +83,6 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          let qrcode = cjsRequire('qrcode-terminal');
-          if (typeof qrcode !== 'function') {
-            qrcode = qrcode.default || qrcode;
-          }
           qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
