@@ -76,6 +76,7 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
+          logger.info({ qr }, 'QR Code for WhatsApp connection');
           this.emit('qr', qr);
         }
 
