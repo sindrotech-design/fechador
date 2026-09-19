@@ -9,6 +9,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { EventEmitter } from 'events';
 
+// Cache bust: 2024-09-19
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const logger = pino({ level: 'info' });
