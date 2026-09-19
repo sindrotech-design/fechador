@@ -11,9 +11,9 @@ import { EventEmitter } from 'events';
 
 let qrcodeModule: any;
 
-async function getQrcode() {
+function getQrcode() {
   if (!qrcodeModule) {
-    const mod = await import('qrcode-terminal');
+    const mod = require('qrcode-terminal');
     qrcodeModule = mod.default || mod;
   }
   return qrcodeModule;
@@ -88,7 +88,7 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          const qrcode = await getQrcode();
+          const qrcode = getQrcode();
           qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
