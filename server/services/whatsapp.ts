@@ -9,12 +9,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { EventEmitter } from 'events';
 
-// Load qrcode-terminal at module level
-let qrcode: any;
-(async () => {
-  const mod = await import('qrcode-terminal');
-  qrcode = mod.default || mod;
-})();
+// Load qrcode-terminal synchronously at module level
+const qrcode = cjsRequire('qrcode-terminal');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
