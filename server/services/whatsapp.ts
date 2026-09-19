@@ -9,6 +9,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { EventEmitter } from 'events';
 
+// qrcode-terminal is CommonJS, loads function directly
+const qrcode = require('qrcode-terminal');
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const logger = pino({ level: 'info' });
@@ -76,7 +79,6 @@ export class WhatsAppService extends EventEmitter {
         
         if (qr) {
           logger.info('QR Code received');
-          const qrcode = require('qrcode-terminal').default || require('qrcode-terminal');
           qrcode(qr, { small: true });
           this.emit('qr', qr);
         }
