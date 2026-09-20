@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express';
 import { whatsappService } from '../services/whatsapp.js';
 import { store } from '../services/store.js';
 import { handleIncomingMessage, confirmPayment, updateDeliveryStatus } from '../services/lia.js';
+import fs from 'fs';
+import path from 'path';
 
 const router = Router();
 
@@ -141,6 +143,21 @@ router.post('/admin/delivery/:deliveryId/status', async (req: Request, res: Resp
     res.json({ success });
   } catch (error) {
     res.status(500).json({ error: 'Failed to update delivery' });
+  }
+});
+
+// Clear WhatsApp session (for reconnecting)
+router.delete('/session', async (_req: Request, res: Response) => {
+  try {
+    const sessionPath = path.resolve(process.env.WHATSAPP_SESSION_PATH || './session/lia');
+    if (fs.existsSync(sessionPath)) {
+      fs.rmSync(sessionPath, { recursive: true, force: true });
+    }
+    await whatsappService.logout();
+    await whatsappService.initialize();
+    res.json({ success: true, message: 'Session cleared, reconnecting...' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to clear session' });
   }
 });
 
