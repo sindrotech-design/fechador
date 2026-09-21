@@ -7,7 +7,7 @@
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "vite",
     "dev:server": "tsx watch server/index.ts",
-    "build": "apt-get update && apt-get install -y chromium && tsc && vite build && tsc -p tsconfig.server.json",
+    "build": "npx @puppeteer/browsers install chrome@stable --path=/tmp/puppeteer && tsc && vite build && tsc -p tsconfig.server.json",
     "start": "node dist/server/index.js",
     "typecheck": "tsc --noEmit"
   },
@@ -30,6 +30,7 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@puppeteer/browsers": "^2.3.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.0",
