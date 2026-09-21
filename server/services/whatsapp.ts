@@ -13,12 +13,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const logger = pino({ level: 'info' });
 
-// Type definitions for whatsapp-web.js (since types don't exist in the package)
-type ClientType = typeof import('whatsapp-web.js').Client;
-type LocalAuthType = typeof import('whatsapp-web.js').LocalAuth;
-type MessageType = typeof import('whatsapp-web.js').Message;
-type MessageMediaType = typeof import('whatsapp-web.js').MessageMedia;
-
 export interface WhatsAppServiceEvents {
   'qr': (qr: string) => void;
   'connected': () => void;
@@ -47,7 +41,7 @@ export interface MessageUpdate {
 }
 
 export class WhatsAppService extends EventEmitter {
-  private client: ReturnType<typeof require('whatsapp-web.js').Client> | null = null;
+  private client: any = null;
   private sessionPath: string;
   private connecting = false;
   private currentQr: string | null = null;
