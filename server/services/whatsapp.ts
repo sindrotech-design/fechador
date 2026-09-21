@@ -1,6 +1,11 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
+
+// Set Puppeteer cache directory to a writable location for Render free tier
+process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer_cache';
+
 const { Client, LocalAuth, Message, MessageMedia } = require('whatsapp-web.js');
+const puppeteer = require('puppeteer');
 
 import pino from 'pino';
 import fs from 'fs';
@@ -56,6 +61,16 @@ export class WhatsAppService extends EventEmitter {
     this.connecting = true;
 
     try {
+      // Get Chromium executable path for Puppeteer
+      let executablePath: string | undefined;
+      try {
+        const puppeteer = require('puppeteer');
+        executablePath = await puppeteer.executablePath();
+        logger.info({ executablePath }, 'Found Chromium executable');
+      } catch (error) {
+        logger.warn({ error }, 'Could not find Chromium executable, will try without explicit path');
+      }
+
       this.client = new Client({
         authStrategy: new LocalAuth({ 
           dataPath: this.sessionPath,
@@ -63,6 +78,7 @@ export class WhatsAppService extends EventEmitter {
         }),
         puppeteer: {
           headless: true,
+          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
