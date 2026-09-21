@@ -78,7 +78,7 @@ export class WhatsAppService extends EventEmitter {
         }),
         puppeteer: {
           headless: true,
-          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/tmp/puppeteer/chrome-linux/chrome',
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
