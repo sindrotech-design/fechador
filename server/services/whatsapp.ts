@@ -1,8 +1,10 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-// Set Puppeteer cache directory to match the Chromium install path
+// Set Puppeteer cache directory BEFORE any puppeteer modules are loaded
 process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
+// Explicitly set the Chrome executable path
+process.env.PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH || '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
 
 const { Client, LocalAuth, Message, MessageMedia } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer');
