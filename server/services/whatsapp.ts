@@ -55,7 +55,10 @@ export class WhatsAppService extends EventEmitter {
 
     try {
       this.client = new Client({
-        authStrategy: new LocalAuth({ dataPath: this.sessionPath }),
+        authStrategy: new LocalAuth({ 
+          dataPath: this.sessionPath,
+          clientId: 'fechador-lia' // Unique client ID to avoid conflicts with other bots
+        }),
         puppeteer: {
           headless: true,
           args: [
