@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-// Set Puppeteer cache directory to a writable location for Render free tier
+// Set Puppeteer cache directory to match the Chromium install path
 process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
 
 const { Client, LocalAuth, Message, MessageMedia } = require('whatsapp-web.js');
@@ -95,6 +95,8 @@ export class WhatsAppService extends EventEmitter {
                 path.join(puppeteerCache, 'chrome', '**', 'chrome-linux64', 'chrome'),
                 '/tmp/puppeteer/chrome-linux/chrome',
                 '/tmp/puppeteer/chrome/linux-*/chrome-linux64/chrome',
+                // New fallback for the exact path structure used by @puppeteer/browsers
+                path.join(puppeteerCache, 'chrome', 'linux-*', 'chrome-linux64', 'chrome'),
               ];
               for (const pattern of fallbackPaths) {
                 const matches = require('glob').sync(pattern);
