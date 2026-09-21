@@ -78,7 +78,18 @@ export class WhatsAppService extends EventEmitter {
         }),
         puppeteer: {
           headless: true,
-          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/tmp/puppeteer/chrome-linux/chrome',
+          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || (() => {
+            try {
+              const glob = require('glob');
+              const path = require('path');
+              const puppeteerCache = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
+              const chromePaths = glob.sync(path.join(puppeteerCache, 'chrome', '**', 'chrome'));
+              return chromePaths[0] || '/tmp/puppeteer/chrome-linux/chrome';
+            } catch (error) {
+              logger.warn({ error }, 'Could not find Chromium executable, will try without explicit path');
+              return undefined;
+            }
+          })(),
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
