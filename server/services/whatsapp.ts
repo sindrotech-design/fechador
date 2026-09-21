@@ -129,11 +129,11 @@ export class WhatsAppService extends EventEmitter {
     }
   }
 
-  private parseMessage(message: Message): WhatsAppMessage | null {
+  private async parseMessage(message: Message): Promise<WhatsAppMessage | null> {
     if (!message.body && message.type !== 'image' && message.type !== 'document') return null;
 
-    const chat = message.getChat();
-    const contact = message.getContact();
+    const chat = await message.getChat();
+    const contact = await message.getContact();
     
     let type: WhatsAppMessage['type'] = 'text';
     let mediaUrl: string | undefined;
@@ -143,20 +143,20 @@ export class WhatsAppService extends EventEmitter {
     switch (message.type) {
       case 'image':
         type = 'image';
-        mediaMimeType = message.mimetype;
+        mediaMimeType = message.getMedia().mimetype;
         break;
       case 'document':
         type = 'document';
-        mediaMimeType = message.mimetype;
-        mediaFileName = message.filename;
+        mediaMimeType = message.getMedia().mimetype;
+        mediaFileName = message.getMedia().filename;
         break;
       case 'audio':
         type = 'audio';
-        mediaMimeType = message.mimetype;
+        mediaMimeType = message.getMedia().mimetype;
         break;
       case 'video':
         type = 'video';
-        mediaMimeType = message.mimetype;
+        mediaMimeType = message.getMedia().mimetype;
         break;
     }
 
