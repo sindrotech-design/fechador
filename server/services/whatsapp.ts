@@ -58,7 +58,7 @@ export class WhatsAppService extends EventEmitter {
       this.sock = makeWASocket({
         auth: state,
         printQRInTerminal: true,
-        logger: pino({ level: 'silent' }),
+        logger: pino({ level: 'silent' }) as any,
         browser: ['Fechador Lia', 'Chrome', '1.0'],
       });
 
