@@ -1,5 +1,4 @@
-import { Client, Message, MessageMedia } from 'whatsapp-web.js';
-import LocalAuth from 'whatsapp-web.js/src/auth/LocalAuth';
+import { Client, LocalAuth, Message, MessageMedia } from 'whatsapp-web.js';
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
