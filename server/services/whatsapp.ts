@@ -1,4 +1,4 @@
-import { Client, LocalAuth, Message, MessageTypes } from 'whatsapp-web.js';
+import { Client, LocalAuth, Message, MessageMedia, MessageTypes } from 'whatsapp-web.js';
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
@@ -132,8 +132,8 @@ export class WhatsAppService extends EventEmitter {
   private parseMessage(message: Message): WhatsAppMessage | null {
     if (!message.body && message.type !== 'image' && message.type !== 'document') return null;
 
-    const chat = message.getChatSync();
-    const contact = message.getContactSync();
+    const chat = message.getChat();
+    const contact = message.getContact();
     
     let type: WhatsAppMessage['type'] = 'text';
     let mediaUrl: string | undefined;
@@ -211,10 +211,8 @@ export class WhatsAppService extends EventEmitter {
   async sendImage(to: string, imageUrl: string, caption?: string): Promise<boolean> {
     if (!this.client) return false;
     try {
-      await this.client.sendMessage(to, {
-        media: imageUrl,
-        caption
-      });
+      const media = await MessageMedia.fromUrl(imageUrl);
+      await this.client.sendMessage(to, media, { caption });
       return true;
     } catch (error) {
       logger.error({ error, to }, 'Failed to send image');
@@ -225,7 +223,7 @@ export class WhatsAppService extends EventEmitter {
   async sendImageBuffer(to: string, buffer: Buffer, caption?: string, mimeType = 'image/jpeg'): Promise<boolean> {
     if (!this.client) return false;
     try {
-      const media = new (require('whatsapp-web.js')).MessageMedia(mimeType, buffer.toString('base64'));
+      const media = new MessageMedia(mimeType, buffer.toString('base64'));
       await this.client.sendMessage(to, media, { caption });
       return true;
     } catch (error) {
