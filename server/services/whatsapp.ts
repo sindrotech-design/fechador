@@ -2,7 +2,6 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Client, LocalAuth, Message, MessageMedia } = require('whatsapp-web.js');
 
-import type { Client as ClientType, LocalAuth as LocalAuthType, Message as MessageType, MessageMedia as MessageMediaType } from 'whatsapp-web.js';
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
@@ -13,6 +12,12 @@ import QRCode from 'qrcode';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const logger = pino({ level: 'info' });
+
+// Type definitions for whatsapp-web.js (since types don't exist in the package)
+type ClientType = typeof import('whatsapp-web.js').Client;
+type LocalAuthType = typeof import('whatsapp-web.js').LocalAuth;
+type MessageType = typeof import('whatsapp-web.js').Message;
+type MessageMediaType = typeof import('whatsapp-web.js').MessageMedia;
 
 export interface WhatsAppServiceEvents {
   'qr': (qr: string) => void;
@@ -42,7 +47,7 @@ export interface MessageUpdate {
 }
 
 export class WhatsAppService extends EventEmitter {
-  private client: Client | null = null;
+  private client: ReturnType<typeof require('whatsapp-web.js').Client> | null = null;
   private sessionPath: string;
   private connecting = false;
   private currentQr: string | null = null;
@@ -102,7 +107,7 @@ export class WhatsAppService extends EventEmitter {
         setTimeout(() => this.initialize(), 5000);
       });
 
-      this.client.on('message', async (message: Message) => {
+      this.client.on('message', async (message: any) => {
         if (message.fromMe) return;
         
         const parsed = this.parseMessage(message);
@@ -111,7 +116,7 @@ export class WhatsAppService extends EventEmitter {
         }
       });
 
-      this.client.on('message_ack', (msg, ack) => {
+      this.client.on('message_ack', (msg: any, ack: number) => {
         this.emit('message-update', {
           id: msg.id._serialized,
           status: this.mapAckToStatus(ack),
@@ -136,7 +141,7 @@ export class WhatsAppService extends EventEmitter {
     }
   }
 
-  private async parseMessage(message: Message): Promise<WhatsAppMessage | null> {
+  private async parseMessage(message: any): Promise<WhatsAppMessage | null> {
     if (!message.body && message.type !== 'image' && message.type !== 'document') return null;
 
     const chat = await message.getChat();
@@ -245,7 +250,7 @@ export class WhatsAppService extends EventEmitter {
     return this.client?.info?.wid ? true : false;
   }
 
-  getClient(): Client | null {
+  getClient(): ReturnType<typeof require('whatsapp-web.js').Client> | null {
     return this.client;
   }
 
