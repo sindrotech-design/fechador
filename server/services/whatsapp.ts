@@ -2,6 +2,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Client, LocalAuth, Message, MessageMedia } = require('whatsapp-web.js');
 
+import type { Client as ClientType, LocalAuth as LocalAuthType, Message as MessageType, MessageMedia as MessageMediaType } from 'whatsapp-web.js';
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
