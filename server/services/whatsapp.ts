@@ -1,8 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const LocalAuth = require('whatsapp-web.js/src/auth/LocalAuth.js').default;
+const { Client, LocalAuth, Message, MessageMedia } = require('whatsapp-web.js');
 
-import { Client, Message, MessageMedia } from 'whatsapp-web.js';
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
@@ -218,6 +217,7 @@ export class WhatsAppService extends EventEmitter {
   async sendImage(to: string, imageUrl: string, caption?: string): Promise<boolean> {
     if (!this.client) return false;
     try {
+      const MessageMedia = require('whatsapp-web.js').MessageMedia;
       const media = await MessageMedia.fromUrl(imageUrl);
       await this.client.sendMessage(to, media, { caption });
       return true;
@@ -230,6 +230,7 @@ export class WhatsAppService extends EventEmitter {
   async sendImageBuffer(to: string, buffer: Buffer, caption?: string, mimeType = 'image/jpeg'): Promise<boolean> {
     if (!this.client) return false;
     try {
+      const MessageMedia = require('whatsapp-web.js').MessageMedia;
       const media = new MessageMedia(mimeType, buffer.toString('base64'));
       await this.client.sendMessage(to, media, { caption });
       return true;
