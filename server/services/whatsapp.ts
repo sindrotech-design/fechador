@@ -68,9 +68,9 @@ export class WhatsAppService extends EventEmitter {
       try {
         const puppeteer = require('puppeteer');
         executablePath = await puppeteer.executablePath();
-        logger.info({ executablePath }, 'Found Chromium executable');
+        logger.info({ executablePath }, 'Found Chromium executable via puppeteer.executablePath()');
       } catch (error) {
-        logger.warn({ error }, 'Could not find Chromium executable, will try without explicit path');
+        logger.warn({ error }, 'Could not find Chromium executable via puppeteer.executablePath(), will try fallback');
       }
 
       this.client = new Client({
@@ -80,38 +80,8 @@ export class WhatsAppService extends EventEmitter {
         }),
         puppeteer: {
           headless: true,
-          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || (() => {
-            try {
-              const glob = require('glob');
-              const path = require('path');
-              const puppeteerCache = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
-              // More flexible glob pattern to find chrome executable
-              const chromePaths = glob.sync(path.join(puppeteerCache, 'chrome', '**', 'chrome'));
-              if (chromePaths.length > 0) {
-                return chromePaths[0];
-              }
-              // Fallback: try common locations
-              const fallbackPaths = [
-                path.join('/tmp/puppeteer', 'chrome', '**', 'chrome'),
-                path.join(puppeteerCache, 'chrome', 'chrome-linux64', 'chrome'),
-                path.join(puppeteerCache, 'chrome', '**', 'chrome-linux64', 'chrome'),
-                '/tmp/puppeteer/chrome-linux/chrome',
-                '/tmp/puppeteer/chrome/linux-*/chrome-linux64/chrome',
-                // New fallback for the exact path structure used by @puppeteer/browsers
-                path.join(puppeteerCache, 'chrome', 'linux-*', 'chrome-linux64', 'chrome'),
-              ];
-              for (const pattern of fallbackPaths) {
-                const matches = require('glob').sync(pattern);
-                if (matches.length > 0) {
-                  return matches[0];
-                }
-              }
-              return undefined;
-            } catch (error) {
-              logger.warn({ error }, 'Could not find Chromium executable, will try without explicit path');
-              return undefined;
-            }
-          })(),
+          // Let puppeteer find the executable automatically via PUPPETEER_CACHE_DIR
+          // Don't set executablePath to let puppeteer find it automatically
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
