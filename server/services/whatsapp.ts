@@ -63,31 +63,20 @@ export class WhatsAppService extends EventEmitter {
     this.connecting = true;
 
     try {
-      // Get Chromium executable path for Puppeteer
+      // Try to find Chromium executable at the known path first
       let executablePath: string | undefined;
-      try {
-        const puppeteer = require('puppeteer');
-        executablePath = await puppeteer.executablePath();
-        logger.info({ executablePath }, 'Found Chromium executable via puppeteer.executablePath()');
-      } catch (error) {
-        logger.warn({ error }, 'Could not find Chromium executable via puppeteer.executablePath(), will try fallback');
-      }
-
-      // Build the exact path where @puppeteer/browsers installs Chrome
-      const chromeVersion = '146.0.7680.31';
-      const chromePath = `/tmp/puppeteer/chrome/linux-${chromeVersion}/chrome-linux64/chrome`;
       
-      // Verify the Chrome binary exists
+      const chromePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
       const fs = require('fs');
-      let executablePath: string | undefined;
-      if (require('fs').existsSync(`/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome`)) {
+      
+      if (require('fs').existsSync('/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome')) {
         executablePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
         logger.info({ executablePath }, 'Found Chromium at expected path');
       } else {
         logger.warn('Chromium not found at expected path, will try puppeteer.executablePath()');
         try {
           const puppeteer = require('puppeteer');
-          executablePath = await puppeteer.executablePath();
+          const executablePath = await puppeteer.executablePath();
           logger.info({ executablePath }, 'Found Chromium executable via puppeteer.executablePath()');
         } catch (error) {
           logger.warn({ error }, 'Could not find Chromium executable via puppeteer.executablePath()');
