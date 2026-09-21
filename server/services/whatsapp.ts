@@ -1,8 +1,4 @@
-import { createRequire } from 'module';
-const cjsRequire = createRequire(import.meta.url);
-
-import { proto, WASocket } from '@whiskeysockets/baileys';
-import { useMultiFileAuthState } from '@whiskeysockets/baileys';
+import { proto, WASocket, useMultiFileAuthState, makeWASocket } from '@whiskeysockets/baileys';
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
@@ -58,9 +54,6 @@ export class WhatsAppService extends EventEmitter {
 
     try {
       const { state, saveCreds } = await useMultiFileAuthState(this.sessionPath);
-
-      // Dynamic import of baileys (ESM)
-      const { default: makeWASocket } = await import('@whiskeysockets/baileys');
       
       this.sock = makeWASocket({
         auth: state,
