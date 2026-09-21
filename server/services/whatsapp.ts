@@ -1,4 +1,8 @@
-import { Client, LocalAuth, Message, MessageMedia } from 'whatsapp-web.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const LocalAuth = require('whatsapp-web.js/src/auth/LocalAuth.js').default;
+
+import { Client, Message, MessageMedia } from 'whatsapp-web.js';
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
