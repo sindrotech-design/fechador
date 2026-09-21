@@ -62,6 +62,10 @@ export class WhatsAppService extends EventEmitter {
     this.connecting = true;
 
     try {
+      // Set up Puppeteer environment variables BEFORE initializing client
+      process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
+      process.env.PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH || '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+
       this.client = new Client({
         authStrategy: new LocalAuth({ 
           dataPath: this.sessionPath,
