@@ -7,8 +7,8 @@
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "vite",
     "dev:server": "tsx watch server/index.ts",
-    "build": "npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer && tsc && vite build && tsc -p tsconfig.server.json",
-    "start": "npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer && node dist/server/index.js",
+    "build": "tsc && vite build && tsc -p tsconfig.server.json",
+    "start": "npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer && chmod +x /tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome && node dist/server/index.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
