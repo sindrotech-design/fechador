@@ -244,7 +244,7 @@ export class WhatsAppService extends EventEmitter {
     return this.client?.info?.wid ? true : false;
   }
 
-  getClient(): ReturnType<typeof require('whatsapp-web.js').Client> | null {
+  getClient(): any {
     return this.client;
   }
 
