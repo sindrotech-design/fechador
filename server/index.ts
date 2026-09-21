@@ -6,6 +6,9 @@ import { Server } from 'socket.io';
 import pino from 'pino';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
+import fs from 'fs';
+import glob from 'glob';
 
 import whatsappRoutes from './routes/whatsapp.js';
 import { whatsappService } from './services/whatsapp.js';
@@ -17,6 +20,41 @@ import communityRoutes from './routes/community.js';
 import settingsRoutes from './routes/settings.js';
 import sheetsRoutes from './routes/sheets.js';
 import mercadoPagoRoutes from './routes/mercadopago.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
+
+// Install Chrome at startup
+async function ensureChromeInstalled(): Promise<string> {
+  const chromePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+  
+  if (fs.existsSync(chromePath)) {
+    fs.chmodSync(chromePath, '755');
+    return chromePath;
+  }
+
+  console.log('📦 Installing Chrome...');
+  try {
+    require('child_process').execSync(
+      'npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer',
+      { stdio: 'inherit', timeout: 180000 }
+    );
+    console.log('✅ Chrome installed successfully');
+  } catch (error) {
+    console.error('❌ Failed to install Chrome:', error);
+    throw error;
+  }
+
+  const chromePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+  
+  if (!fs.existsSync(chromePath)) {
+    throw new Error('Chrome binary not found after installation');
+  }
+
+  fs.chmodSync(chromePath, '755');
+  console.log('✅ Chrome ready at:', chromePath);
+  return chromePath;
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
@@ -40,7 +78,7 @@ app.set('logger', logger);
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+}
 
 // API Routes
 app.use('/api/whatsapp', whatsappRoutes);
@@ -64,7 +102,7 @@ if (process.env.NODE_ENV === 'production') {
       return next();
     }
     res.sendFile(path.join(clientPath, 'index.html'));
-  });
+  }
 }
 
 // Socket.io connection
@@ -74,7 +112,66 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     logger.info({ socketId: socket.id }, 'Client disconnected');
   });
-});
+}
+
+async function startServer() {
+  try {
+    // Ensure Chrome is installed before starting the server
+    console.log('🔧 Ensuring Chrome is installed...');
+    const chromePath = await ensureChromeInstalled();
+    process.env.PUPPETEER_EXECUTABLE_PATH = chromePath;
+    process.env.PUPPETEER_CACHE_DIR = '/tmp/puppeteer';
+    
+    const PORT = parseInt(process.env.PORT || '43128', 10);
+    
+    httpServer.listen({ port: PORT, host: '0.0.0.0', ipv6Only: false }, () => {
+      logger.info(`Server running on port ${PORT}`);
+      logger.info(`WebSocket server ready`);
+      logger.info(`Server address: ${JSON.stringify(httpServer.address())}`);
+    });
+
+    // Initialize WhatsApp in background (non-blocking)
+    setImmediate(() => {
+      whatsappService.initialize().catch(err => {
+        logger.error({ err }, 'Failed to initialize WhatsApp');
+      });
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+async function ensureChromeInstalled(): Promise<string> {
+  const chromePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+  
+  if (fs.existsSync(chromePath)) {
+    fs.chmodSync(chromePath, '755');
+    return chromePath;
+  }
+
+  console.log('📦 Installing Chrome...');
+  try {
+    require('child_process').execSync(
+      'npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer',
+      { stdio: 'inherit', timeout: 180000 }
+    );
+    console.log('✅ Chrome installed successfully');
+  } catch (error) {
+    console.error('❌ Failed to install Chrome:', error);
+    throw error;
+  }
+
+  const chromePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+  
+  if (!fs.existsSync(chromePath)) {
+    throw new Error('Chrome binary not found after installation');
+  }
+
+  fs.chmodSync(chromePath, '755');
+  console.log('✅ Chrome ready at:', chromePath);
+  return chromePath;
+}
 
 const PORT = parseInt(process.env.PORT || '43128', 10);
 
