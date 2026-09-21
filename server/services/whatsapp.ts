@@ -2,7 +2,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 // Set Puppeteer cache directory to a writable location for Render free tier
-process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer_cache';
+process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
 
 const { Client, LocalAuth, Message, MessageMedia } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer');
