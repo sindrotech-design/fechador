@@ -8,7 +8,7 @@
     "dev:client": "vite",
     "dev:server": "tsx watch server/index.ts",
     "build": "tsc && vite build && tsc -p tsconfig.server.json",
-    "start": "npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer && sleep 15 && chmod +x /tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome && ls -la /tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome && node dist/server/index.js",
+    "start": "npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer && sleep 5 && node -e \"const fs = require('fs'); const glob = require('glob'); const path = require('path'); const base = '/tmp/puppeteer'; const files = glob.sync('/tmp/puppeteer/chrome/**/chrome'); const chrome = files.find(f => fs.existsSync(f)); if (chrome) { require('fs').chmodSync(chrome, '755'); console.log('Found Chrome at:', chrome); process.env.PUPPETEER_EXECUTABLE_PATH = chrome; require('./dist/server/index.js'); } else { console.error('Chrome not found'); process.exit(1); }\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
