@@ -92,29 +92,6 @@ export class WhatsAppService extends EventEmitter {
           remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
         },
       });
-        authStrategy: new LocalAuth({ 
-          dataPath: this.sessionPath,
-          clientId: 'fechador-lia' // Unique client ID to avoid conflicts with other bots
-        }),
-        puppeteer: {
-          headless: true,
-          executablePath: executablePath,
-          args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-gpu'
-          ],
-        },
-        webVersionCache: {
-          type: 'remote',
-          remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
-        },
-      });
 
       this.client.on('qr', (qr: string) => {
         logger.info('QR Code received');
