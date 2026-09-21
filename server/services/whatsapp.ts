@@ -8,6 +8,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { EventEmitter } from 'events';
+import QRCode from 'qrcode';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,6 +45,7 @@ export class WhatsAppService extends EventEmitter {
   private sock: WASocket | null = null;
   private sessionPath: string;
   private connecting = false;
+  private currentQr: string | null = null;
 
   constructor() {
     super();
@@ -77,6 +79,7 @@ export class WhatsAppService extends EventEmitter {
         if (qr) {
           logger.info('QR Code received');
           logger.info({ qr }, 'QR Code for WhatsApp connection');
+          this.currentQr = qr;
           this.emit('qr', qr);
         }
 
@@ -134,6 +137,30 @@ export class WhatsAppService extends EventEmitter {
       logger.error({ error }, 'Failed to initialize WhatsApp');
       throw error;
     }
+  }
+
+  // Get current QR code as base64 PNG image
+  async getQrImageBase64(): Promise<string | null> {
+    if (!this.currentQr) return null;
+    try {
+      return await QRCode.toDataURL(this.currentQr, {
+        type: 'image/png',
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#ffffff'
+        }
+      });
+    } catch (error) {
+      logger.error({ error }, 'Failed to generate QR image');
+      return null;
+    }
+  }
+
+  // Get current QR code string
+  getCurrentQr(): string | null {
+    return this.currentQr;
   }
 
   private parseMessage(msg: proto.IWebMessageInfo): WhatsAppMessage | null {

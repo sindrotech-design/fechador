@@ -161,4 +161,37 @@ router.delete('/session', async (_req: Request, res: Response) => {
   }
 });
 
+// Get QR code as image (PNG)
+router.get('/qr-image', async (_req: Request, res: Response) => {
+  try {
+    const qrBase64 = await whatsappService.getQrImageBase64();
+    if (!qrBase64) {
+      return res.status(404).json({ error: 'No QR code available. Wait for QR to be generated.' });
+    }
+    
+    // Convert base64 to buffer
+    const base64Data = qrBase64.replace(/^data:image\/png;base64,/, '');
+    const imgBuffer = Buffer.from(base64Data, 'base64');
+    
+    res.set('Content-Type', 'image/png');
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.send(imgBuffer);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate QR image' });
+  }
+});
+
+// Get QR code as raw string
+router.get('/qr-string', async (_req: Request, res: Response) => {
+  try {
+    const qr = whatsappService.getCurrentQr();
+    if (!qr) {
+      return res.status(404).json({ error: 'No QR code available' });
+    }
+    res.json({ qr });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get QR code' });
+  }
+});
+
 export default router;
