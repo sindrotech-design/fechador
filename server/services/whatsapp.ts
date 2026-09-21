@@ -143,20 +143,20 @@ export class WhatsAppService extends EventEmitter {
     switch (message.type) {
       case 'image':
         type = 'image';
-        mediaMimeType = message.getMedia().mimetype;
+        mediaMimeType = message.mimetype;
         break;
       case 'document':
         type = 'document';
-        mediaMimeType = message.getMedia().mimetype;
-        mediaFileName = message.getMedia().filename;
+        mediaMimeType = message.mimetype;
+        mediaFileName = message.filename;
         break;
       case 'audio':
         type = 'audio';
-        mediaMimeType = message.getMedia().mimetype;
+        mediaMimeType = message.mimetype;
         break;
       case 'video':
         type = 'video';
-        mediaMimeType = message.getMedia().mimetype;
+        mediaMimeType = message.mimetype;
         break;
     }
 
