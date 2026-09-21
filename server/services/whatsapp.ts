@@ -83,8 +83,26 @@ export class WhatsAppService extends EventEmitter {
               const glob = require('glob');
               const path = require('path');
               const puppeteerCache = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
+              // More flexible glob pattern to find chrome executable
               const chromePaths = glob.sync(path.join(puppeteerCache, 'chrome', '**', 'chrome'));
-              return chromePaths[0] || '/tmp/puppeteer/chrome-linux/chrome';
+              if (chromePaths.length > 0) {
+                return chromePaths[0];
+              }
+              // Fallback: try common locations
+              const fallbackPaths = [
+                path.join('/tmp/puppeteer', 'chrome', '**', 'chrome'),
+                path.join(puppeteerCache, 'chrome', 'chrome-linux64', 'chrome'),
+                path.join(puppeteerCache, 'chrome', '**', 'chrome-linux64', 'chrome'),
+                '/tmp/puppeteer/chrome-linux/chrome',
+                '/tmp/puppeteer/chrome/linux-*/chrome-linux64/chrome',
+              ];
+              for (const pattern of fallbackPaths) {
+                const matches = require('glob').sync(pattern);
+                if (matches.length > 0) {
+                  return matches[0];
+                }
+              }
+              return undefined;
             } catch (error) {
               logger.warn({ error }, 'Could not find Chromium executable, will try without explicit path');
               return undefined;
