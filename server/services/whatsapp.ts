@@ -63,27 +63,35 @@ export class WhatsAppService extends EventEmitter {
     this.connecting = true;
 
     try {
-      // Try to find Chromium executable at the known path first
-      let executablePath: string | undefined;
-      
-      const chromePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
-      const fs = require('fs');
-      
-      if (require('fs').existsSync('/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome')) {
-        executablePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
-        logger.info({ executablePath }, 'Found Chromium at expected path');
-      } else {
-        logger.warn('Chromium not found at expected path, will try puppeteer.executablePath()');
-        try {
-          const puppeteer = require('puppeteer');
-          const executablePath = await puppeteer.executablePath();
-          logger.info({ executablePath }, 'Found Chromium executable via puppeteer.executablePath()');
-        } catch (error) {
-          logger.warn({ error }, 'Could not find Chromium executable via puppeteer.executablePath()');
-        }
-      }
+      // Set up Puppeteer environment variables for automatic Chrome detection
+      process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
+      process.env.PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH || '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
 
       this.client = new Client({
+        authStrategy: new LocalAuth({ 
+          dataPath: this.sessionPath,
+          clientId: 'fechador-lia' // Unique client ID to avoid conflicts with other bots
+        }),
+        puppeteer: {
+          headless: true,
+          // Let puppeteer find Chrome automatically via PUPPETEER_CACHE_DIR and PUPPETEER_EXECUTABLE_PATH
+          // Don't set executablePath explicitly to let puppeteer find it automatically
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu'
+          ],
+        },
+        webVersionCache: {
+          type: 'remote',
+          remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
+        },
+      });
         authStrategy: new LocalAuth({ 
           dataPath: this.sessionPath,
           clientId: 'fechador-lia' // Unique client ID to avoid conflicts with other bots
