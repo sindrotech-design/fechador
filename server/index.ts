@@ -8,7 +8,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 import fs from 'fs';
-const glob = require('glob');
 
 import whatsappRoutes from './routes/whatsapp.js';
 import { whatsappService } from './services/whatsapp.js';
