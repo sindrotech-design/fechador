@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-const SOCKET_URL = (import.meta as any).env?.VITE_SOCKET_URL || 'http://localhost:43128';
+const SOCKET_URL = (import.meta as any).env?.VITE_SOCKET_URL || (import.meta.env.PROD ? '' : 'http://localhost:43128');
 
 export function WhatsAppConnect() {
   const [qrBase64, setQrBase64] = useState<string | null>(null);

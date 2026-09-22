@@ -103,16 +103,17 @@ io.on('connection', (socket) => {
 });
 
 whatsappService.on('connected', () => {
-  logger.info('Broadcasting WhatsApp connected');
+  logger.info('WhatsApp CONNECTED - Broadcasting to clients');
   io.emit('whatsapp:connected');
 });
 
 whatsappService.on('disconnected', (reason: string) => {
-  logger.info({ reason }, 'Broadcasting WhatsApp disconnected');
+  logger.warn({ reason }, 'WhatsApp DISCONNECTED - Broadcasting to clients');
   io.emit('whatsapp:disconnected', reason);
 });
 
 whatsappService.on('qr', (qr: string) => {
+  logger.info('WhatsApp QR generated - Broadcasting to clients');
   io.emit('whatsapp:qr', qr);
 });
 

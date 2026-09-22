@@ -55,6 +55,7 @@ export class WhatsAppService extends EventEmitter {
   constructor() {
     super();
     this.sessionPath = path.resolve(process.env.WHATSAPP_SESSION_PATH || './session/lia');
+    logger.info({ sessionPath: this.sessionPath }, 'WhatsApp session path');
   }
 
   async initialize(): Promise<void> {
