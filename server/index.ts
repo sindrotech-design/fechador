@@ -128,6 +128,9 @@ if (process.env.NODE_ENV === 'production') {
 io.on('connection', (socket) => {
   logger.info({ socketId: socket.id }, 'Client connected');
 
+  // Send current WhatsApp status to newly connected client
+  socket.emit('whatsapp:status', { connected: whatsappService.isConnected() });
+
   socket.on('disconnect', () => {
     logger.info({ socketId: socket.id }, 'Client disconnected');
   });

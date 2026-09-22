@@ -30,6 +30,9 @@ export function Layout() {
     newSocket.on('disconnect', () => setConnected(false));
     newSocket.on('whatsapp:connected', () => setWhatsappConnected(true));
     newSocket.on('whatsapp:disconnected', () => setWhatsappConnected(false));
+    newSocket.on('whatsapp:status', (data: { connected: boolean }) => {
+      setWhatsappConnected(data.connected);
+    });
     
     setSocket(newSocket);
     
