@@ -161,8 +161,15 @@ export class WhatsAppService extends EventEmitter {
   private async parseMessage(message: any): Promise<WhatsAppMessage | null> {
     if (!message.body && message.type !== 'image' && message.type !== 'document') return null;
 
-    const chat = await message.getChat();
-    const contact = await message.getContact();
+    let chat: any = null;
+    let contact: any = null;
+    
+    try {
+      chat = await message.getChat();
+      contact = await message.getContact();
+    } catch (error) {
+      this.logger.warn({ error, messageId: message.id?._serialized }, 'Failed to get chat/contact, using fallback');
+    }
     
     let type: WhatsAppMessage['type'] = 'text';
     let mediaUrl: string | undefined;
