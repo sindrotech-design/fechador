@@ -18,6 +18,7 @@ export function Layout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [whatsappConnected, setWhatsappConnected] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
@@ -27,6 +28,8 @@ export function Layout() {
     
     newSocket.on('connect', () => setConnected(true));
     newSocket.on('disconnect', () => setConnected(false));
+    newSocket.on('whatsapp:connected', () => setWhatsappConnected(true));
+    newSocket.on('whatsapp:disconnected', () => setWhatsappConnected(false));
     
     setSocket(newSocket);
     
@@ -86,8 +89,8 @@ export function Layout() {
           {/* Connection status */}
           <div className="p-4 border-t border-gray-200">
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span className={`w-2 h-2 rounded-full ${connected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-              <span>{connected ? 'Conectado' : 'Desconectado'}</span>
+              <span className={`w-2 h-2 rounded-full ${whatsappConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
+              <span>{whatsappConnected ? 'WhatsApp Conectado' : 'WhatsApp Desconectado'}</span>
             </div>
             <div className="mt-2 text-xs text-gray-400">
               v1.0.0 - SindroTech
@@ -113,7 +116,7 @@ export function Layout() {
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-500 hidden sm:block">
-              {connected ? '🟢 Online' : '🔴 Offline'}
+              {whatsappConnected ? '🟢 WhatsApp Online' : '🔴 WhatsApp Offline'}
             </span>
           </div>
         </header>

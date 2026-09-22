@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
+
+const SOCKET_URL = (import.meta as any).env?.VITE_SOCKET_URL || 'http://localhost:43128';
 
 export function WhatsAppConnect() {
   const [qrBase64, setQrBase64] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   const fetchQR = async () => {
     try {
@@ -42,6 +46,26 @@ export function WhatsAppConnect() {
   };
 
   useEffect(() => {
+    const newSocket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+    });
+    
+    newSocket.on('whatsapp:connected', () => {
+      setConnected(true);
+      setQrBase64(null);
+      setError(null);
+    });
+    
+    newSocket.on('whatsapp:disconnected', () => {
+      setConnected(false);
+    });
+    
+    newSocket.on('whatsapp:qr', () => {
+      fetchQR();
+    });
+    
+    setSocket(newSocket);
+    
     fetchQR();
     checkStatus();
 
@@ -52,7 +76,10 @@ export function WhatsAppConnect() {
       }
     }, 3000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      newSocket.close();
+    };
   }, [connected]);
 
   if (connected) {

@@ -102,6 +102,20 @@ io.on('connection', (socket) => {
   });
 });
 
+whatsappService.on('connected', () => {
+  logger.info('Broadcasting WhatsApp connected');
+  io.emit('whatsapp:connected');
+});
+
+whatsappService.on('disconnected', (reason: string) => {
+  logger.info({ reason }, 'Broadcasting WhatsApp disconnected');
+  io.emit('whatsapp:disconnected', reason);
+});
+
+whatsappService.on('qr', (qr: string) => {
+  io.emit('whatsapp:qr', qr);
+});
+
 async function startServer() {
   try {
     console.log('🔧 Ensuring Chrome is installed...');
