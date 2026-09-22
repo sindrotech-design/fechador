@@ -7,6 +7,7 @@ import { Eventos } from './pages/Eventos';
 import { Comunidade } from './pages/Comunidade';
 import { Ajustes } from './pages/Ajustes';
 import { Login } from './pages/Login';
+import { WhatsAppConnect } from './pages/WhatsAppConnect';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="eventos" element={<Eventos />} />
         <Route path="comunidade" element={<Comunidade />} />
         <Route path="ajustes" element={<Ajustes />} />
+        <Route path="whatsapp" element={<WhatsAppConnect />} />
       </Route>
       <Route path="*" element={<Navigate to="/inbox" replace />} />
     </Routes>

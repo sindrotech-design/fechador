@@ -11,6 +11,7 @@ const navItems = [
   { path: '/eventos', label: 'Eventos', icon: '🎉' },
   { path: '/comunidade', label: 'Comunidade', icon: '🤝' },
   { path: '/ajustes', label: 'Ajustes', icon: '⚙️' },
+  { path: '/whatsapp', label: 'WhatsApp', icon: '📱' },
 ];
 
 export function Layout() {
