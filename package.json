@@ -8,7 +8,7 @@
     "dev:client": "vite",
     "dev:server": "tsx watch server/index.ts",
     "build": "tsc && vite build && tsc -p tsconfig.server.json",
-    "start": "node start.js",
+    "start": "npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer && sleep 15 && find /tmp/puppeteer -name 'chrome' -type f -executable 2>/dev/null | head -1 | xargs -I {} sh -c 'chmod +x \"$1\"; echo \"Found Chrome at: $1\"; export PUPPETEER_EXECUTABLE_PATH=\"$1\"; exec node dist/server/index.js' _ {}",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -19,7 +19,6 @@
     "googleapis": "^139.0.0",
     "mercadopago": "^2.0.0",
     "pino": "^9.0.0",
-    "puppeteer": "^22.0.0",
     "qrcode": "^1.5.4",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
