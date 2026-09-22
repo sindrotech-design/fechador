@@ -168,7 +168,7 @@ export class WhatsAppService extends EventEmitter {
       chat = await message.getChat();
       contact = await message.getContact();
     } catch (error) {
-      this.logger.warn({ error, messageId: message.id?._serialized }, 'Failed to get chat/contact, using fallback');
+      logger.warn({ error, messageId: message.id?._serialized }, 'Failed to get chat/contact, using fallback');
     }
     
     let type: WhatsAppMessage['type'] = 'text';
