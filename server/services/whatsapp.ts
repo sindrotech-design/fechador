@@ -1,6 +1,19 @@
 // Set Puppeteer environment variables BEFORE any imports
-process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
-process.env.PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH || '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+import os from 'os';
+import path from 'path';
+
+const isWin = os.platform() === 'win32';
+const defaultCacheDir = isWin 
+  ? path.join(process.env.TEMP || 'C:\\tmp', 'puppeteer')
+  : '/tmp/puppeteer';
+const defaultChromePath = isWin 
+  ? undefined  // Will use system Chrome
+  : '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+
+process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || defaultCacheDir;
+if (defaultChromePath) {
+  process.env.PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH || defaultChromePath;
+}
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -63,9 +76,8 @@ export class WhatsAppService extends EventEmitter {
     this.connecting = true;
 
     try {
-      // Set up Puppeteer environment variables BEFORE initializing client
-      process.env.PUPPETEER_CACHE_DIR = process.env.PUPPETEER_CACHE_DIR || '/tmp/puppeteer';
-      process.env.PUPPETEER_EXECUTABLE_PATH = process.env.PUPPETEER_EXECUTABLE_PATH || '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+      // Puppeteer env vars already set at module load
+      // Don't override with Linux paths on Windows
 
       this.client = new Client({
         authStrategy: new LocalAuth({ 

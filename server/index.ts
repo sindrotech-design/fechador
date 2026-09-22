@@ -8,6 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
 import fs from 'fs';
+import os from 'os';
 
 import whatsappRoutes from './routes/whatsapp.js';
 import { whatsappService } from './services/whatsapp.js';
@@ -23,7 +24,37 @@ import mercadoPagoRoutes from './routes/mercadopago.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
+function getSystemChromePath(): string | null {
+  if (os.platform() === 'win32') {
+    const candidates = [
+      process.env.PUPPETEER_EXECUTABLE_PATH,
+      'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+      'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+      path.join(process.env.LOCALAPPDATA || '', 'Google\\Chrome\\Application\\chrome.exe'),
+    ].filter(Boolean) as string[];
+
+    for (const p of candidates) {
+      if (fs.existsSync(p)) return p;
+    }
+    return null;
+  }
+  // Linux (Render)
+  return '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
+}
+
 async function ensureChromeInstalled(): Promise<string> {
+  const systemChrome = getSystemChromePath();
+  
+  if (systemChrome && fs.existsSync(systemChrome)) {
+    console.log('✅ Using system Chrome at:', systemChrome);
+    return systemChrome;
+  }
+
+  if (os.platform() === 'win32') {
+    throw new Error('Chrome não encontrado. Instale o Chrome ou defina PUPPETEER_EXECUTABLE_PATH no .env');
+  }
+
+  // Linux: install via @puppeteer/browsers
   const chromePath = '/tmp/puppeteer/chrome/linux-146.0.7680.31/chrome-linux64/chrome';
 
   if (fs.existsSync(chromePath)) {
@@ -122,7 +153,9 @@ async function startServer() {
     console.log('🔧 Ensuring Chrome is installed...');
     const chromePath = await ensureChromeInstalled();
     process.env.PUPPETEER_EXECUTABLE_PATH = chromePath;
-    process.env.PUPPETEER_CACHE_DIR = '/tmp/puppeteer';
+    process.env.PUPPETEER_CACHE_DIR = os.platform() === 'win32' 
+      ? path.join(process.env.TEMP || 'C:\\tmp', 'puppeteer')
+      : '/tmp/puppeteer';
 
     const PORT = parseInt(process.env.PORT || '43128', 10);
 
