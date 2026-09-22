@@ -78,16 +78,16 @@ export class WhatsAppService extends EventEmitter {
     try {
       // Puppeteer env vars already set at module load
       // Don't override with Linux paths on Windows
+      const chromePath = process.env.PUPPETEER_EXECUTABLE_PATH;
 
       this.client = new Client({
         authStrategy: new LocalAuth({ 
           dataPath: this.sessionPath,
-          clientId: 'fechador-lia' // Unique client ID to avoid conflicts with other bots
+          clientId: 'fechador-lia'
         }),
         puppeteer: {
           headless: true,
-          // Let puppeteer find Chrome automatically via PUPPETEER_CACHE_DIR and PUPPETEER_EXECUTABLE_PATH
-          // Don't set executablePath explicitly to let puppeteer find it automatically
+          executablePath: chromePath,
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
