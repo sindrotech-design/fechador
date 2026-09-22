@@ -25,6 +25,9 @@ export default defineConfig({
         ws: true,
       },
     },
+    watch: {
+      ignored: ['**/session/**', '**/node_modules/**'],
+    },
   },
   build: {
     outDir: 'dist/client',
