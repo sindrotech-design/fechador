@@ -33,7 +33,7 @@ async function ensureChromeInstalled(): Promise<string> {
 
   console.log('📦 Installing Chrome...');
   try {
-    require('child_process').execSync(
+    execSync(
       'npx @puppeteer/browsers install chrome@146.0.7680.31 --path=/tmp/puppeteer',
       { stdio: 'inherit', timeout: 180000 }
     );
