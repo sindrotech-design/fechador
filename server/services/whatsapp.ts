@@ -238,8 +238,8 @@ export class WhatsAppService extends EventEmitter {
     try {
       await this.client.sendMessage(to, text);
       return true;
-    } catch (error) {
-      logger.error({ error, to }, 'Failed to send text');
+    } catch (error: any) {
+      logger.error({ error: error?.message || error, stack: error?.stack, to }, 'Failed to send text');
       return false;
     }
   }
